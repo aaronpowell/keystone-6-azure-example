@@ -1,6 +1,6 @@
 # Deploying Keystone 6 on Azure
 
-This article will cover how to deploy Keystone to Azure using Platform-as-a-Service (PaaS).
+This article will cover how to deploy [Keystone](https://keystonejs.com/) to Azure using Platform-as-a-Service (PaaS).
 
 You will need an Azure account for this, you can sign up for a [free trial](https://azure.microsoft.com/free/?WT.mc_id=javascript-38807-aapowell) if you don't already have one.
 
