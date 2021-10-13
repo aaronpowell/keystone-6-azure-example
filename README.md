@@ -4,15 +4,17 @@ This article will cover how to deploy Keystone to Azure using Platform-as-a-Serv
 
 You will need an Azure account for this, you can sign up for a [free trial](https://azure.microsoft.com/free/?WT.mc_id=javascript-38807-aapowell) if you don't already have one.
 
-There are three ways in which you can deploy to Azure, [using the portal](#creating-resources-via-the-azure-portal), [using the Azure CLI](#creating-resources-via-the-azure-cli) or using an [Azure Resource Manager template](#deploy-with-an-azure-resource-manager-template).
-
-As the file system of a PaaS deployment is transient, an external file store will be needed for images/files that are to be uploaded. See [storing files and images](#storing-files-and-images) for more information on that.
-
-Keystone provides a build in authentication model with its own user account management, but if external account management is preferred using [Azure AD B2C](https://docs.microsoft.com/azure/active-directory-b2c/overview?WT.mc_id=javascript-38807-aapowell), [refer here](#optional---using-azure-ad-b2c-for-user-accounts) on how to configure that.
-
 ## Required Resources
 
 There are three resources in Azure that are required to run Keystone in a PaaS model, [AppService](https://azure.microsoft.com/services/app-service/?WT.mc_id=javascript-38807-aapowell#overview) to host the Keystone web application, [Storage](https://azure.microsoft.com/product-categories/storage/?WT.mc_id=javascript-38807-aapowell) to store images/uploaded assets, and a [managed Postgres database](https://azure.microsoft.com/services/postgresql/?WT.mc_id=javascript-38807-aapowell#overview).
+
+## Table of Contents
+
+- [Create resources using the portal](#creating-resources-via-the-azure-portal)
+- [Create using the Azure CLI](#creating-resources-via-the-azure-cli)
+- [Create Azure Resource Manager template](#deploy-with-an-azure-resource-manager-template)
+- [Storing files and images with Azure Storage](#storing-files-and-images)
+- [Azure AD B2C for user management](#optional---using-azure-ad-b2c-for-user-accounts)
 
 ## Creating Resources via the Azure Portal
 
