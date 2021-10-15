@@ -47,14 +47,14 @@ In this section we'll use the Azure Portal to create the required resources to h
 
 1. Ensure the _Subscription_ and _Resource Group_ are correct, then provide the following configuration for the storage account:
 
-   - _Name_ - `my-keystone-app`
+   - _Name_ - `mykeystoneapp`
    - _Region_ - Select an appropriate region
    - _Performance_ - `Standard`
    - _Redundancy_ - Select the appropriate level of redundancy for your files
 
 1. Click **Review + create** then **Create**
 
-1. Navigate back to the Resource Group and click **Create** then search for _Azure Database for Postgres_ and click **Create**
+1. Navigate back to the Resource Group and click **Create** then search for _Azure Database for PostgreSQL_ and click **Create**
 
 1. Select _Single server_ for the service type
 
@@ -87,7 +87,7 @@ Once all the resources are created, you will need to get the connection informat
 1. Navigate to **Overview** and copy _Server name_ and _Server admin login name_
 1. Open the [Azure Cloud Shell](https://shell.azure.com?WT.mc_id=javascript-38807-aapowell) and log into the `psql` cli:
 
-   - `psql --host <server> --user <username> --port=5432 -p`
+   - `psql --host <server> --user <username> --port=5432`
 
 1. Create a database for Keystone to use `CREATE DATABASE keystone;` then close the Cloud Shell
    - Optional - create a separate non server admin user (see [this doc](https://docs.microsoft.com/azure/mysql/howto-create-users?tabs=single-server&WT.mc_id=javascript-38807-aapowell) for guidance)
