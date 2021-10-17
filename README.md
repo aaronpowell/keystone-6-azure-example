@@ -10,11 +10,15 @@ There are three resources in Azure that are required to run Keystone in a PaaS m
 
 ## Table of Contents
 
-- [Create resources using the portal](#creating-resources-via-the-azure-portal)
-- [Create using the Azure CLI](#creating-resources-via-the-azure-cli)
-- [Create Azure Resource Manager template](#deploy-with-an-azure-resource-manager-template)
+- Creating Resoueces
+  - [Using the portal](#creating-resources-via-the-azure-portal)
+  - [Using the Azure CLI](#creating-resources-via-the-azure-cli)
+  - [Using an Azure Resource Manager (ARM) template](#deploy-with-an-azure-resource-manager-template)
 - [Storing files and images with Azure Storage](#storing-files-and-images)
+- [Automated Deploymnets](#deploying-and-running-keystone)
 - [Azure AD B2C for user management](#optional---using-azure-ad-b2c-for-user-accounts)
+
+---
 
 ## Creating Resources via the Azure Portal
 
@@ -94,6 +98,8 @@ Once all the resources are created, you will need to get the connection informat
 1. Navigate to the **Web App** you created and go to **Settings** - **Configuration**
 1. Create new application setting, `DATABASE_URL`, which contains the connection string, encoded [per prisma's requirements]() (this will become the environment variables available to Keystone) and click _Save_
 
+---
+
 ## Creating Resources via the Azure CLI
 
 In this section, we'll use the [Azure CLI](https://docs.microsoft.com/cli/azure/?WT.mc_id=javascript-38807-aapowell) to create the required resources. This will assume you have some familiarity with the Azure CLI and how to find the right values.
@@ -161,11 +167,17 @@ In this section, we'll use the [Azure CLI](https://docs.microsoft.com/cli/azure/
    az webapp config appsettings set --resource-group $rgName --name $webAppName --setting DATABASE_URL=postgres://$username%40$serverName:$password@$serverName.postgres.database.azure.com:5432/$dbName
    ```
 
+---
+
 ## Deploy with an Azure Resource Manager template
 
-A Resource Manager template has been created that will provision all the resources that are required, as well as setup the appropriate settings across the AppService. Click the button below and fill out the parameters as required to create the resources. Alternatively, you can create a custom template deployment via the portal and upload the file, or run the template form the Azure CLI.
+A Resource Manager template has been created that will provision all the resources that are required, as well as setup the appropriate settings across the AppService. Click the button below and fill out the parameters as required to create the resources. Alternatively, you can create a custom template deployment via the portal and [upload the template file](https://github.com/aaronpowell/keystone-6-azure-example/blob/main/.azure/azuredeploy.json), or [run the template form the Azure CLI](https://docs.microsoft.com/azure/azure-resource-manager/templates/deploy-cli?WT.mc_id=javascript-38807-aapowell).
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Faaronpowell%2Fkeystone-6-azure-sample%2Fmain%2F.azure%2Fazuredeploy.json)
+
+_The template is located at [`.azure/azuredeploy.json`](https://github.com/aaronpowell/keystone-6-azure-example/blob/main/.azure/azuredeploy.json)_
+
+---
 
 ## Storing files and images
 
