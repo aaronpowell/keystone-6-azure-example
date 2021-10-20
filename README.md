@@ -91,7 +91,7 @@ Once all the resources are created, you will need to get the connection informat
 1. Navigate to **Overview** and copy _Server name_ and _Server admin login name_
 1. Open the [Azure Cloud Shell](https://shell.azure.com?WT.mc_id=javascript-38807-aapowell) and log into the `psql` cli:
 
-   - `psql --host <server> --user <username> --port=5432`
+   - `psql --host <server> --user <username> --port=5432 --dbname postgres`
 
 1. Create a database for Keystone to use `CREATE DATABASE keystone;` then close the Cloud Shell
    - Optional - create a separate non server admin user (see [this doc](https://docs.microsoft.com/azure/mysql/howto-create-users?tabs=single-server&WT.mc_id=javascript-38807-aapowell) for guidance)
