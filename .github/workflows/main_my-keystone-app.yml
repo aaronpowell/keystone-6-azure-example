@@ -52,7 +52,7 @@ jobs:
         with:
           app-name: my-keystone-app
           slot-name: Production
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_0CE756F96C2243A8841904E66B6B4F08 }}
+          publish-profile: ${{ secrets.PUBLISHING_PROFILE }}
           package: package.zip
 
       - name: Unzip package
