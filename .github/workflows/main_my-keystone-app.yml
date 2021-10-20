@@ -1,37 +1,35 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
 name: Build and deploy Node.js app to Azure Web App - my-keystone-app
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout Github Action
+        uses: actions/checkout@v2
 
       - name: Set up Node.js version
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2
         with:
-          node-version: '14.x'
+          node-version: "14.x"
 
       - name: npm install, build, and test
         run: |
-          npm install
+          npm ci
           npm run build --if-present
           npm run test --if-present
+      - name: package
+        run: zip -r package.zip . -x .azure .devcontainers .github .gitignore package-lock.json tsconfig.json
 
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v2
         with:
-          name: node-app
-          path: .
+          name: package
+          path: package.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -41,16 +39,26 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v2
         with:
-          name: node-app
+          name: package
 
-      - name: 'Deploy to Azure Web App'
-        id: deploy-to-webapp
+      - name: Run Azure webapp deploy action using publish profile credentials
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'my-keystone-app'
-          slot-name: 'Production'
+          app-name: my-keystone-app
+          slot-name: Production
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_0CE756F96C2243A8841904E66B6B4F08 }}
-          package: .
+          package: package.zip
+
+      - name: Unzip package
+        run: unzip package.zip -d .release/
+
+      - name: Set up Node.js version
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14.x"
+
+      - name: Update database
+        run: node ./node_modules/@keystone-next/keystone/bin/cli.js prisma db push
+        working-directory: .release
