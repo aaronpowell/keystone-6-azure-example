@@ -83,9 +83,9 @@ Once all the resources are created, you will need to get the connection informat
 1. Navigate to **Security + networking** - **Access keys**, copy the _Storage account name_ and _key1_
 1. Navigate to the **Web App (App Service)** you created and go to **Settings** - **Configuration**
 1. Create three **New application settings**:
-   - `STORAGE_ACCOUNT` as the _Storage account name_ value you copied above.
-   - `STORAGE_ACCOUNT_KEY` as the _key1_ value you copied above.
-   - `STORAGE_ACCOUNT_CONTAINER` as the name of the container, which you specified as `keystone-uploads` above.
+   - `AZURE_STORAGE_ACCOUNT` as the _Storage account name_ value you copied above.
+   - `AZURE_STORAGE_KEY` as the _key1_ value you copied above.
+   - `AZURE_STORAGE_CONTAINER` as the name of the container, which you specified as `keystone-uploads` above.
 1. These will become the environment variables available to Keystone, click _Save_.
 
 #### Configure Postgres
@@ -167,9 +167,9 @@ In this section, we'll use the [Azure CLI](https://docs.microsoft.com/cli/azure/
 1. Add configuration values to the Web App (App Service)
 
    ```bash
-   az webapp config appsettings set --resource-group $rgName --name $webAppName --setting STORAGE_ACCOUNT=$saName
-   az webapp config appsettings set --resource-group $rgName --name $webAppName --setting STORAGE_ACCOUNT_KEY=$saKey
-   az webapp config appsettings set --resource-group $rgName --name $webAppName --setting STORAGE_ACCOUNT_CONTAINER=$container
+   az webapp config appsettings set --resource-group $rgName --name $webAppName --setting AZURE_STORAGE_ACCOUNT=$saName
+   az webapp config appsettings set --resource-group $rgName --name $webAppName --setting AZURE_STORAGE_KEY=$saKey
+   az webapp config appsettings set --resource-group $rgName --name $webAppName --setting AZURE_STORAGE_CONTAINER=$container
    az webapp config appsettings set --resource-group $rgName --name $webAppName --setting DATABASE_URL=postgres://$username%40$serverName:$password@$serverName.postgres.database.azure.com:5432/$dbName
    ```
 
