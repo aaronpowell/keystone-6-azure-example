@@ -74,19 +74,23 @@ In this section we'll use the Azure Portal to create the required resources to h
 
 ### Configuring the Resources
 
-Once all the resources are created, you will need to get the connection information for the Postgres and Storage account to the Web App, as well as configure the resources for use.
+Once all the resources are created, you will need to get the connection information for the Postgres and Storage account to the Web App (App Service), as well as configure the resources for use.
 
 #### Configure the Storage Account
 
-1. Navigate to the Storage Account resource, then **Data storage** - **Containers**
+1. Navigate to the **Storage Account** resource, then **Data storage** - **Containers**
 1. Create a new Container, provide a _Name_, `keystone-uploads`, and set _Public access level_ to `Blob`, then click **Create**
 1. Navigate to **Security + networking** - **Access keys**, copy the _Storage account name_ and _key1_
-1. Navigate to the **Web App** you created and go to **Settings** - **Configuration**
-1. Create new application settings for the Storage account, storage account key and container name (these will become the environment variables available to Keystone) and click _Save_
+1. Navigate to the **Web App (App Service)** you created and go to **Settings** - **Configuration**
+1. Create three **New application settings**:
+   - `STORAGE_ACCOUNT` as the _Storage account name_ value you copied above.
+   - `STORAGE_ACCOUNT_KEY` as the _key1_ value you copied above.
+   - `STORAGE_ACCOUNT_CONTAINER` as the name of the container, which you specified as `keystone-uploads` above.
+1. These will become the environment variables available to Keystone, click _Save_.
 
 #### Configure Postgres
 
-1. Navigate to the Postgres resource then **Settings** - **Connection security**
+1. Navigate to the **Azure Database for PostgreSQL server** resource then **Settings** - **Connection security**
 1. Set `Allow access to Azure services` to `Yes` and click **Save**
 1. Navigate to **Overview** and copy _Server name_ and _Server admin login name_
 1. Open the [Azure Cloud Shell](https://shell.azure.com?WT.mc_id=javascript-38807-aapowell) and log into the `psql` cli:
@@ -95,8 +99,10 @@ Once all the resources are created, you will need to get the connection informat
 
 1. Create a database for Keystone to use `CREATE DATABASE keystone;` then close the Cloud Shell
    - Optional - create a separate non server admin user (see [this doc](https://docs.microsoft.com/azure/mysql/howto-create-users?tabs=single-server&WT.mc_id=javascript-38807-aapowell) for guidance)
-1. Navigate to the **Web App** you created and go to **Settings** - **Configuration**
-1. Create new application setting, `DATABASE_URL`, which contains the connection string, encoded [per prisma's requirements]() (this will become the environment variables available to Keystone) and click _Save_
+1. Navigate to the **Web App (App Service)** you created and go to **Settings** - **Configuration**
+1. Create a **New application setting** named `DATABASE_URL`, which contains the connection string, encoded [per Prisma's requirements](https://www.prisma.io/docs/concepts/database-connectors/postgresql) (this will become the environment variables available to Keystone) and click _Save_, it will look something like:
+
+```postgres://$username%40$serverName:$password@$serverName.postgres.database.azure.com:5432/$dbName```
 
 ---
 
@@ -119,7 +125,7 @@ In this section, we'll use the [Azure CLI](https://docs.microsoft.com/cli/azure/
    az appservice plan create --resource-group $rgName --name $appPlanName --is-linux --number-of-workers 4 --sku S1 --location $location
    ```
 
-1. Create a Web App running Node.js 14
+1. Create a Web App (App Service) running Node.js 14
 
    ```bash
    webAppName=my-keystone-app
@@ -158,7 +164,7 @@ In this section, we'll use the [Azure CLI](https://docs.microsoft.com/cli/azure/
    az postgres server firewall-rule create --resource-group $rgName --server-name $serverName --name AllowAllAzureIps --start-ip-range 0.0.0.0 --end-ip-range 0.0.0.0
    ```
 
-1. Add configuration values to the Web App
+1. Add configuration values to the Web App (App Service)
 
    ```bash
    az webapp config appsettings set --resource-group $rgName --name $webAppName --setting STORAGE_ACCOUNT=$saName
