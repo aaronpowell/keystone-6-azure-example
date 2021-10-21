@@ -101,7 +101,8 @@ Once all the resources are created, you will need to get the connection informat
    - Optional - create a separate non server admin user (see [this doc](https://docs.microsoft.com/azure/mysql/howto-create-users?tabs=single-server&WT.mc_id=javascript-38807-aapowell) for guidance)
 1. Navigate to the **Web App (App Service)** you created and go to **Settings** - **Configuration**
 1. Create a **New application setting** named `DATABASE_URL`, which contains the connection string, encoded [per Prisma's requirements](https://www.prisma.io/docs/concepts/database-connectors/postgresql) (this will become the environment variables available to Keystone) and click _Save_, it will look something like:
-   - postgres://$username%40$serverName:$password@$serverName.postgres.database.azure.com:5432/$dbName
+   
+   - `postgres://$username%40$serverName:$password@$serverName.postgres.database.azure.com:5432/$dbName`
 
 ---
 
