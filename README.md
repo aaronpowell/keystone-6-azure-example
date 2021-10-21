@@ -179,7 +179,7 @@ In this section, we'll use the [Azure CLI](https://docs.microsoft.com/cli/azure/
 
 A Resource Manager template has been created that will provision all the resources that are required, as well as setup the appropriate settings across the AppService. Click the button below and fill out the parameters as required to create the resources. Alternatively, you can create a custom template deployment via the portal and [upload the template file](https://github.com/aaronpowell/keystone-6-azure-example/blob/main/.azure/azuredeploy.json), or [run the template form the Azure CLI](https://docs.microsoft.com/azure/azure-resource-manager/templates/deploy-cli?WT.mc_id=javascript-38807-aapowell).
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Faaronpowell%2Fkeystone-6-azure-sample%2Fmain%2F.azure%2Fazuredeploy.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Faaronpowell%2Fkeystone-6-azure-example%2Fmain%2F.azure%2Fazuredeploy.json)
 
 _The template is located at [`.azure/azuredeploy.json`](https://github.com/aaronpowell/keystone-6-azure-example/blob/main/.azure/azuredeploy.json)_
 
