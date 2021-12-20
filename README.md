@@ -10,11 +10,15 @@ There are three resources in Azure that are required to run Keystone in a PaaS m
 
 ## Table of Contents
 
-- [Create resources using the portal](#creating-resources-via-the-azure-portal)
-- [Create using the Azure CLI](#creating-resources-via-the-azure-cli)
-- [Create Azure Resource Manager template](#deploy-with-an-azure-resource-manager-template)
+- Creating Resoueces
+  - [Using the portal](#creating-resources-via-the-azure-portal)
+  - [Using the Azure CLI](#creating-resources-via-the-azure-cli)
+  - [Using an Azure Resource Manager (ARM) template](#deploy-with-an-azure-resource-manager-template)
 - [Storing files and images with Azure Storage](#storing-files-and-images)
+- [Automated Deploymnets](#deploying-and-running-keystone)
 - [Azure AD B2C for user management](#optional---using-azure-ad-b2c-for-user-accounts)
+
+---
 
 ## Creating Resources via the Azure Portal
 
@@ -47,14 +51,14 @@ In this section we'll use the Azure Portal to create the required resources to h
 
 1. Ensure the _Subscription_ and _Resource Group_ are correct, then provide the following configuration for the storage account:
 
-   - _Name_ - `my-keystone-app`
+   - _Name_ - `mykeystoneapp`
    - _Region_ - Select an appropriate region
    - _Performance_ - `Standard`
    - _Redundancy_ - Select the appropriate level of redundancy for your files
 
 1. Click **Review + create** then **Create**
 
-1. Navigate back to the Resource Group and click **Create** then search for _Azure Database for Postgres_ and click **Create**
+1. Navigate back to the Resource Group and click **Create** then search for _Azure Database for PostgreSQL_ and click **Create**
 
 1. Select _Single server_ for the service type
 
@@ -70,29 +74,37 @@ In this section we'll use the Azure Portal to create the required resources to h
 
 ### Configuring the Resources
 
-Once all the resources are created, you will need to get the connection information for the Postgres and Storage account to the Web App, as well as configure the resources for use.
+Once all the resources are created, you will need to get the connection information for the Postgres and Storage account to the Web App (App Service), as well as configure the resources for use.
 
 #### Configure the Storage Account
 
-1. Navigate to the Storage Account resource, then **Data storage** - **Containers**
+1. Navigate to the **Storage Account** resource, then **Data storage** - **Containers**
 1. Create a new Container, provide a _Name_, `keystone-uploads`, and set _Public access level_ to `Blob`, then click **Create**
 1. Navigate to **Security + networking** - **Access keys**, copy the _Storage account name_ and _key1_
-1. Navigate to the **Web App** you created and go to **Settings** - **Configuration**
-1. Create new application settings for the Storage account, storage account key and container name (these will become the environment variables available to Keystone) and click _Save_
+1. Navigate to the **Web App (App Service)** you created and go to **Settings** - **Configuration**
+1. Create three **New application settings**:
+   - `AZURE_STORAGE_ACCOUNT` as the _Storage account name_ value you copied above.
+   - `AZURE_STORAGE_KEY` as the _key1_ value you copied above.
+   - `AZURE_STORAGE_CONTAINER` as the name of the container, which you specified as `keystone-uploads` above.
+1. These will become the environment variables available to Keystone, click _Save_.
 
 #### Configure Postgres
 
-1. Navigate to the Postgres resource then **Settings** - **Connection security**
+1. Navigate to the **Azure Database for PostgreSQL server** resource then **Settings** - **Connection security**
 1. Set `Allow access to Azure services` to `Yes` and click **Save**
 1. Navigate to **Overview** and copy _Server name_ and _Server admin login name_
 1. Open the [Azure Cloud Shell](https://shell.azure.com?WT.mc_id=javascript-38807-aapowell) and log into the `psql` cli:
 
-   - `psql --host <server> --user <username> --port=5432 -p`
+   - `psql --host <server> --user <username> --port=5432 --dbname postgres`
 
 1. Create a database for Keystone to use `CREATE DATABASE keystone;` then close the Cloud Shell
    - Optional - create a separate non server admin user (see [this doc](https://docs.microsoft.com/azure/mysql/howto-create-users?tabs=single-server&WT.mc_id=javascript-38807-aapowell) for guidance)
-1. Navigate to the **Web App** you created and go to **Settings** - **Configuration**
-1. Create new application setting, `DATABASE_URL`, which contains the connection string, encoded [per prisma's requirements]() (this will become the environment variables available to Keystone) and click _Save_
+1. Navigate to the **Web App (App Service)** you created and go to **Settings** - **Configuration**
+1. Create a **New application setting** named `DATABASE_URL`, which contains the connection string, encoded [per Prisma's requirements](https://www.prisma.io/docs/concepts/database-connectors/postgresql) (this will become the environment variables available to Keystone) and click _Save_, it will look something like:
+   
+   - `postgres://$username%40$serverName:$password@$serverName.postgres.database.azure.com:5432/$dbName`
+
+---
 
 ## Creating Resources via the Azure CLI
 
@@ -113,11 +125,11 @@ In this section, we'll use the [Azure CLI](https://docs.microsoft.com/cli/azure/
    az appservice plan create --resource-group $rgName --name $appPlanName --is-linux --number-of-workers 4 --sku S1 --location $location
    ```
 
-1. Create a Web App running Node.js 14
+1. Create a Web App (App Service) running Node.js 14
 
    ```bash
    webAppName=my-keystone-app
-   az webapp create --resource-group $rgName --name $webAppName --plan $appPlanName --runtime "node|10.14"
+   az webapp create --resource-group $rgName --name $webAppName --plan $appPlanName --runtime "NODE|14-lts"
    ```
 
 1. Create a Storage Account
@@ -149,23 +161,29 @@ In this section, we'll use the [Azure CLI](https://docs.microsoft.com/cli/azure/
    az postgres db create --resource-group $rgName --name $dbName --server-name $serverName
 
    # Allow Azure resources through the firewall
-   az postgres server firewall-rule create --resource-group $rgName --server-name $serverName --name AllowAllAzureIps --start-ip-range 0.0.0.0 --end-ip-range 0.0.0.0
+   az postgres server firewall-rule create --resource-group $rgName --server-name $serverName --name AllowAllAzureIps --start-ip-address 0.0.0.0 --end-ip-address 0.0.0.0
    ```
 
-1. Add configuration values to the Web App
+1. Add configuration values to the Web App (App Service)
 
    ```bash
-   az webapp config appsettings set --resource-group $rgName --name $webAppName --setting STORAGE_ACCOUNT=$saName
-   az webapp config appsettings set --resource-group $rgName --name $webAppName --setting STORAGE_ACCOUNT_KEY=$saKey
-   az webapp config appsettings set --resource-group $rgName --name $webAppName --setting STORAGE_ACCOUNT_CONTAINER=$container
+   az webapp config appsettings set --resource-group $rgName --name $webAppName --setting AZURE_STORAGE_ACCOUNT=$saName
+   az webapp config appsettings set --resource-group $rgName --name $webAppName --setting AZURE_STORAGE_KEY=$saKey
+   az webapp config appsettings set --resource-group $rgName --name $webAppName --setting AZURE_STORAGE_CONTAINER=$container
    az webapp config appsettings set --resource-group $rgName --name $webAppName --setting DATABASE_URL=postgres://$username%40$serverName:$password@$serverName.postgres.database.azure.com:5432/$dbName
    ```
 
+---
+
 ## Deploy with an Azure Resource Manager template
 
-A Resource Manager template has been created that will provision all the resources that are required, as well as setup the appropriate settings across the AppService. Click the button below and fill out the parameters as required to create the resources. Alternatively, you can create a custom template deployment via the portal and upload the file, or run the template form the Azure CLI.
+A Resource Manager template has been created that will provision all the resources that are required, as well as setup the appropriate settings across the AppService. Click the button below and fill out the parameters as required to create the resources. Alternatively, you can create a custom template deployment via the portal and [upload the template file](https://github.com/aaronpowell/keystone-6-azure-example/blob/main/.azure/azuredeploy.json), or [run the template form the Azure CLI](https://docs.microsoft.com/azure/azure-resource-manager/templates/deploy-cli?WT.mc_id=javascript-38807-aapowell).
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Faaronpowell%2Fkeystone-6-azure-sample%2Fmain%2F.azure%2Fazuredeploy.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Faaronpowell%2Fkeystone-6-azure-example%2Fmain%2F.azure%2Fazuredeploy.json)
+
+_The template is located at [`.azure/azuredeploy.json`](https://github.com/aaronpowell/keystone-6-azure-example/blob/main/.azure/azuredeploy.json)_
+
+---
 
 ## Storing files and images
 
