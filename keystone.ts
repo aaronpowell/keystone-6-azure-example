@@ -1,4 +1,4 @@
-import { config } from "@keystone-next/keystone";
+import { config } from "@keystone-6/core";
 import { PORT, DATABASE_URL } from "./config";
 import { lists } from "./schema";
 import { withAuth, session } from "./auth";

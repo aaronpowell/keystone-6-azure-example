@@ -183,7 +183,7 @@ To start the Node.js application, AppService will run the `npm start` command. A
 
 ```json
 "scripts": {
-    "start": "node ./node_modules/@keystone-next/keystone/bin/cli.js start"
+    "start": "node ./node_modules/@keystone-6/core/bin/cli.js start"
 }
 ```
 

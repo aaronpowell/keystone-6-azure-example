@@ -1,8 +1,8 @@
-import { createAuth } from "@keystone-next/auth";
+import { createAuth } from "@keystone-6/auth";
 import { SESSION_MAX_AGE, SESSION_SECRET } from "./config";
 
 // See https://keystonejs.com/docs/apis/session#session-api for the session docs
-import { statelessSessions } from "@keystone-next/keystone/session";
+import { statelessSessions } from "@keystone-6/core/session";
 
 // Here we define how auth relates to our schemas.
 // What we are saying here is that we want to use the list `User`, and to log in

@@ -3,16 +3,16 @@
   "version": "3.0.1",
   "private": true,
   "scripts": {
-    "dev": "keystone-next dev",
-    "start": "node ./node_modules/@keystone-next/keystone/bin/cli.js start",
-    "build": "keystone-next build",
-    "postinstall": "keystone-next postinstall"
+    "dev": "keystone dev",
+    "start": "node ./node_modules/@keystone-6/core/bin/cli.js start",
+    "build": "keystone build",
+    "postinstall": "keystone postinstall"
   },
   "dependencies": {
-    "@k6-contrib/fields-azure": "^0.4.1",
-    "@keystone-next/auth": "^34.0.0",
-    "@keystone-next/fields-document": "^11.0.0",
-    "@keystone-next/keystone": "^26.1.0",
-    "typescript": "^4.4.3"
+    "@k6-contrib/fields-azure": "^1.0.0",
+    "@keystone-6/auth": "^1.0.0",
+    "@keystone-6/fields-document": "^1.0.1",
+    "@keystone-6/core": "^1.0.0",
+    "typescript": "^4.5.4"
   }
 }

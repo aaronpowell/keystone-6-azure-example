@@ -1,12 +1,12 @@
-import { list } from "@keystone-next/keystone";
+import { list } from "@keystone-6/core";
 import {
   text,
   relationship,
   password,
   timestamp,
   select,
-} from "@keystone-next/keystone/fields";
-import { document } from "@keystone-next/fields-document";
+} from "@keystone-6/core/fields";
+import { document } from "@keystone-6/fields-document";
 import { azureStorageImage } from "@k6-contrib/fields-azure";
 
 export const lists = {
